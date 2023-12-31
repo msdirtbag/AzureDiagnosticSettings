@@ -1,0 +1,195 @@
+{
+  "properties": {
+    "displayName": "AZDS_AKST1",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "description": "Configures Azure Kubernetes Services Diagnostic Settings.",
+    "metadata": {
+      "version": "2.0.0",
+      "category": "Kubernetes"
+    },
+    "parameters": {
+      "effect": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy"
+        },
+        "allowedValues": [
+          "DeployIfNotExists",
+          "Disabled"
+        ],
+        "defaultValue": "DeployIfNotExists"
+      },
+      "diagnosticsSettingNameToUse": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Setting name",
+          "description": "Name of the diagnostic settings."
+        },
+        "defaultValue": "AZDS_AKST1"
+      },
+      "logAnalytics": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Log Analytics workspace",
+          "description": "Specify the Log Analytics workspace the Azure Kubernetes Service should be connected to",
+          "strongType": "omsWorkspace",
+          "assignPermissions": true
+        }
+      },
+      "kube-audit-admin": {
+        "type": "String",
+        "metadata": {
+          "displayName": "kube-audit-admin - Enabled",
+          "description": "Whether to stream kube-audit-admin logs to the Log Analytics workspace - True or False"
+        },
+        "allowedValues": [
+          "True",
+          "False"
+        ],
+        "defaultValue": "True"
+      },
+      "guard": {
+        "type": "String",
+        "metadata": {
+          "displayName": "guard - Enabled",
+          "description": "Whether to stream guard logs to the Log Analytics workspace - True or False"
+        },
+        "allowedValues": [
+          "True",
+          "False"
+        ],
+        "defaultValue": "True"
+      }
+    },
+    "policyRule": {
+      "if": {
+        "field": "type",
+        "equals": "Microsoft.ContainerService/managedClusters"
+      },
+      "then": {
+        "effect": "[parameters('effect')]",
+        "details": {
+          "type": "Microsoft.Insights/diagnosticSettings",
+          "roleDefinitionIds": [
+            "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+            "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+          ],
+          "existenceCondition": {
+            "allOf": [
+              {
+                "count": {
+                  "value": [
+                    {
+                      "category": "kube-audit-admin",
+                      "enabled": "[parameters('kube-audit-admin')]"
+                    },
+                    {
+                      "category": "guard",
+                      "enabled": "[parameters('guard')]"
+                    }
+                  ],
+                  "name": "logCategoriesParameter",
+                  "where": {
+                    "count": {
+                      "field": "Microsoft.Insights/diagnosticSettings/logs[*]",
+                      "where": {
+                        "allOf": [
+                          {
+                            "field": "Microsoft.Insights/diagnosticSettings/logs[*].enabled",
+                            "equals": "[current('logCategoriesParameter').enabled]"
+                          },
+                          {
+                            "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                            "equals": "[current('logCategoriesParameter').category]"
+                          }
+                        ]
+                      }
+                    },
+                    "greater": 2
+                  }
+                },
+                "equals": 1
+              }
+            ]
+          },
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "diagnosticsSettingNameToUse": {
+                    "type": "string"
+                  },
+                  "resourceName": {
+                    "type": "string"
+                  },
+                  "logAnalytics": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "kube-audit-admin": {
+                    "type": "string"
+                  },
+                  "guard": {
+                    "type": "string"
+                  }
+                },
+                "variables": {},
+                "resources": [
+                  {
+                    "type": "Microsoft.ContainerService/managedClusters/providers/diagnosticSettings",
+                    "apiVersion": "2017-05-01-preview",
+                    "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('diagnosticsSettingNameToUse'))]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [],
+                    "properties": {
+                      "workspaceId": "[parameters('logAnalytics')]",
+                      "logs": [
+                        {
+                          "category": "kube-audit-admin",
+                          "enabled": "[parameters('kube-audit-admin')]"
+                        },
+                        {
+                          "category": "guard",
+                          "enabled": "[parameters('guard')]"
+                        }
+                      ],
+                      "logAnalyticsDestinationType": "Dedicated"
+                    }
+                  }
+                ],
+                "outputs": {}
+              },
+              "parameters": {
+                "diagnosticsSettingNameToUse": {
+                  "value": "[parameters('diagnosticsSettingNameToUse')]"
+                },
+                "logAnalytics": {
+                  "value": "[parameters('logAnalytics')]"
+                },
+                "location": {
+                  "value": "[field('location')]"
+                },
+                "resourceName": {
+                  "value": "[field('name')]"
+                },
+                "guard": {
+                  "value": "[parameters('guard')]"
+                },
+                "kube-audit-admin": {
+                  "value": "[parameters('kube-audit-admin')]"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

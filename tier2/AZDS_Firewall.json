@@ -1,0 +1,210 @@
+{
+    "properties": {
+      "displayName": "AZDS_Firewall",
+      "policyType": "Custom",
+      "mode": "Indexed",
+      "description": "Configures Azure Firewall Diagnostic Settings.",
+      "metadata": {
+        "version": "2.0.0",
+        "category": "Network"
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "metadata": {
+            "displayName": "Effect"
+          },
+          "allowedValues": [
+            "DeployIfNotExists",
+            "Disabled"
+          ],
+          "defaultValue": "DeployIfNotExists"
+        },
+        "profileName": {
+          "type": "String",
+          "metadata": {
+            "displayName": "Profile name"
+          },
+          "defaultValue": "AZDS_Firewall"
+        },
+        "logAnalytics": {
+          "type": "String",
+          "metadata": {
+            "displayName": "Log Analytics workspace",
+            "strongType": "omsWorkspace",
+            "assignPermissions": true
+          }
+        },
+        "logsEnabled": {
+          "type": "String",
+          "metadata": {
+            "displayName": "Enable logs"
+          },
+          "allowedValues": [
+            "True",
+            "False"
+          ],
+          "defaultValue": "True"
+        },
+        "matchWorkspace": {
+          "type": "Boolean",
+          "metadata": {
+            "displayName": "Workspace id must match"
+          },
+          "allowedValues": [
+            true,
+            false
+          ],
+          "defaultValue": true
+        }
+      },
+      "policyRule": {
+        "if": {
+          "field": "type",
+          "equals": "Microsoft.Network/azureFirewalls"
+        },
+        "then": {
+          "effect": "[parameters('effect')]",
+          "details": {
+            "type": "Microsoft.Insights/diagnosticSettings",
+            "name": "[parameters('profileName')]",
+            "evaluationDelay": "AfterProvisioning",
+            "existenceCondition": {
+              "allOf": [
+                {
+                  "count": {
+                    "field": "Microsoft.Insights/diagnosticSettings/logs[*]",
+                    "where": {
+                      "allOf": [
+                        {
+                          "field": "Microsoft.Insights/diagnosticSettings/logs[*].enabled",
+                          "equals": "[parameters('logsEnabled')]"
+                        },
+                        {
+                          "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                          "equals": "AZFWDnsQuery"
+                        },
+                        {
+                          "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                          "equals": "AZFWNetworkRule"
+                        },
+                        {
+                          "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                          "equals": "AZFWApplicationRule"
+                        },
+                        {
+                          "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                          "equals": "AZFWIdpsSignature"
+                        },
+                        {
+                          "field": "Microsoft.Insights/diagnosticSettings/logs[*].category",
+                          "equals": "AZFWThreatIntel"
+                        }
+                      ]
+                    }
+                  },
+                  "greaterOrEquals": 5
+                },
+                {
+                  "anyOf": [
+                    {
+                      "value": "[parameters('matchWorkspace')]",
+                      "equals": false
+                    },
+                    {
+                      "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
+                      "equals": "[parameters('logAnalytics')]"
+                    }
+                  ]
+                }
+              ]
+            },
+            "roleDefinitionIds": [
+              "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+              "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+            ],
+            "deployment": {
+              "properties": {
+                "mode": "incremental",
+                "template": {
+                  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "resourceName": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "logAnalytics": {
+                      "type": "string"
+                    },
+                    "logsEnabled": {
+                      "type": "string"
+                    },
+                    "profileName": {
+                      "type": "string"
+                    }
+                  },
+                  "variables": {},
+                  "resources": [
+                    {
+                      "type": "Microsoft.Network/azureFirewalls/providers/diagnosticSettings",
+                      "apiVersion": "2021-05-01-preview",
+                      "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
+                      "location": "[parameters('location')]",
+                      "dependsOn": [],
+                      "properties": {
+                        "workspaceId": "[parameters('logAnalytics')]",
+                        "logs": [
+                          {
+                            "category": "AZFWDnsQuery",
+                            "enabled": "[parameters('logsEnabled')]"
+                          },
+                          {
+                            "category": "AZFWIdpsSignature",
+                            "enabled": "[parameters('logsEnabled')]"
+                          },
+                          {
+                            "category": "AZFWApplicationRule",
+                            "enabled": "[parameters('logsEnabled')]"
+                          },
+                          {
+                            "category": "AZFWNetworkRule",
+                            "enabled": "[parameters('logsEnabled')]"
+                          },
+                          {
+                            "category": "AZFWThreatIntel",
+                            "enabled": "[parameters('logsEnabled')]"
+                          }
+                        ],
+                        "logAnalyticsDestinationType": "Dedicated"
+                      }
+                    }
+                  ],
+                  "outputs": {}
+                },
+                "parameters": {
+                  "location": {
+                    "value": "[field('location')]"
+                  },
+                  "resourceName": {
+                    "value": "[field('name')]"
+                  },
+                  "logAnalytics": {
+                    "value": "[parameters('logAnalytics')]"
+                  },
+                  "logsEnabled": {
+                    "value": "[parameters('logsEnabled')]"
+                  },
+                  "profileName": {
+                    "value": "[parameters('profileName')]"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }

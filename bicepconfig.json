@@ -1,0 +1,103 @@
+{
+  "analyzers": {
+    "core": {
+      "enabled": true,
+      "rules": {
+        "adminusername-should-not-be-literal": {
+          "level": "off"
+        },
+        "artifacts-parameters": {
+          "level": "off"
+        },
+        "decompiler-cleanup": {
+          "level": "off"
+        },
+        "max-outputs": {
+          "level": "off"
+        },
+        "max-params": {
+          "level": "off"
+        },
+        "max-resources": {
+          "level": "off"
+        },
+        "max-variables": {
+          "level": "off"
+        },
+        "no-conflicting-metadata" : {
+          "level": "off"
+        },
+        "no-deployments-resources" : {
+          "level": "off"
+        },
+        "no-hardcoded-env-urls": {
+          "level": "off"
+        },
+        "no-hardcoded-location": {
+          "level": "off"
+        },
+        "no-loc-expr-outside-params": {
+          "level": "off"
+        },
+        "no-unnecessary-dependson": {
+          "level": "off"
+        },
+        "no-unused-existing-resources": {
+          "level": "off"
+        },
+        "no-unused-params": {
+          "level": "off"
+        },
+        "no-unused-vars": {
+          "level": "off"
+        },
+        "outputs-should-not-contain-secrets": {
+          "level": "off"
+        },
+        "prefer-interpolation": {
+          "level": "off"
+        },
+        "prefer-unquoted-property-names": {
+          "level": "off"
+        },
+        "protect-commandtoexecute-secrets": {
+          "level": "off"
+        },
+        "secure-parameter-default": {
+          "level": "off"
+        },
+        "secure-params-in-nested-deploy": {
+          "level": "off"
+        },
+        "secure-secrets-in-params": {
+          "level": "off"
+        },
+        "simplify-interpolation": {
+          "level": "off"
+        },
+        "simplify-json-null": {
+          "level": "off"
+        },
+        "use-parent-property": {
+          "level": "off"
+        },
+        "use-recent-api-versions": {
+          "level": "warning",
+          "maxAllowedAgeInDays": 180
+        },
+        "use-resource-id-functions": {
+          "level": "off"
+        },
+        "use-resource-symbol-reference": {
+          "level": "off"
+        },
+        "use-stable-resource-identifiers": {
+          "level": "off"
+        },
+        "use-stable-vm-image": {
+          "level": "off"
+        }
+      }
+    }
+  }
+}
