@@ -1,3 +1,4 @@
+Connect-AzAccount -Identity
 $TenantRoot = (Get-AzContext).Tenant.Id
 $Subscriptions = Get-AzSubscription
 foreach ($sub in $Subscriptions) {
