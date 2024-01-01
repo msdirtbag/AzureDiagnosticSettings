@@ -594,28 +594,6 @@ module azstoragedeploy './polassign.bicep' = if (deploytier3) {
   ]
 }
 
-//This deploys Container Instances Diagnostic Settings.
-var AZDS_ACI = json(loadTextContent('./tier3/AZDS_ACI.json'))
-resource acipolicy 'Microsoft.Authorization/policyDefinitions@2023-04-01' = if (deploytier3) {
-  name: 'AZDS_ACI'
-  properties: AZDS_ACI.properties
-}
-module azacideploy './polassign.bicep' = if (deploytier3) {
-  name: 'AZDS_ACIDeployment'
-  scope: managementGroup(managementgroup)
-  params:{
-    policyassignname: 'AZDS_ACI'
-    policydefinitionid: acipolicy.id
-    policydescription: acipolicy.properties.description
-    azdsumiid: azdsmanagedidentity.outputs.mirid
-    loganalyticsregion: loganalyticsregion
-    loganalyticsrid: loganalytics3rid
-  }
-  dependsOn: [
-    acipolicy
-  ]
-}
-
 //This deploys Application Insights Diagnostic Settings.
 var AZDS_APPI = json(loadTextContent('./tier3/AZDS_APPI.json'))
 resource appipolicy 'Microsoft.Authorization/policyDefinitions@2023-04-01' = if (deploytier3) {

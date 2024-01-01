@@ -66,7 +66,7 @@ resource runbook 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' =
       version: '1.0.0.0'
       contentHash: {
         algorithm: 'sha256'
-        value: 'D4A708119B3FD5C98603A3D69CD115A584A0CAF8C2BFDE51B26F3AB8EDBFAA85'
+        value: 'b7bce70d12ea35d618d4f2c667eea7332ca745014f8d8c6d2c409ebb860baa9a'
       }
     }
   }

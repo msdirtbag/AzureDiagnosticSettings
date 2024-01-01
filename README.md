@@ -43,5 +43,138 @@ What is Azure Policy: https://learn.microsoft.com/en-us/azure/governance/policy/
 - Azure Cloud Shell: https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-cloud-shell
 - GitHub Actions: https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deploy-github-actions
 
+## Log Documentation:
+
+### Tier 1:
+
+Background: These logs are inexpensive to collect and should be collected in every Azure tenant regardless of the tenant’s purpose or risk tolerance.
+
+Resource Type + Log Analytics Table:
+
+Azure Container Registry
+•	ContainerRegistryRepositoryEvents
+•	ContainerRegistryLoginEvents
+
+Azure Kubernetes Service
+•	kube-audit-admin
+•	guard
+
+Azure Automation
+•	AzureDiagnostics-AuditEvent
+
+Azure Activity
+•	AzureActivity-Administrative, Security, ServiceHealth, Alert, Recommendation, Policy, Autoscale, ResourceHealth
+
+Azure Bastion
+•	MicrosoftAzureBastionAuditLogs
+
+Azure Key Vault
+•	AzureDiagnostics-AuditEvent
+
+Azure Recovery Vault
+•	CoreAzureBackup
+•	AddonAzureBackupAlerts
+•	AddonAzureBackupPolicy
+•	AddonAzureBackupStorage
+
+### Tier 2:
+
+Background: This tier includes the Network telemetry logs that should provide broad Ingress/Egress & East/West visibility into Azure network communications. (In Azure deployments that follow CAF/WAF design standards)
+
+Resource Type + Log Analytics Table:
+
+Azure Application Gateway
+•	ApplicationGatewayFirewallLog
+•	ApplicationGatewayAccessLog
+
+Azure Front Door
+•	FrontdoorWebApplicationFirewallLog
+•	FrontdoorAccessLog
+
+Azure Firewall
+•	AZFWDnsQuery
+•	AZFWIdpsSignature
+•	AZFWApplicationRule
+•	AZFWNetworkRule
+•	AZFWThreatIntel
+
+Azure Network Security Group
+•	NetworkSecurityGroupEvent
+
+Azure NSG Flow Log
+•	AzureNetworkAnalytics_CL
+
+### Tier 3:
+
+Background: This tier is mostly the Application and Performance logs that enhance security incident investigations. These logs should be stored in a non-Sentinel-enabled LAW that can be queried from Sentinel via cross workspace KQL queries. 
+
+Resource Type + Log Analytics Table:
+
+Azure Kubernetes Service
+•	kube-apiserver
+•	kube-audit
+•	kube-controller-manager
+•	kube-scheduler 
+•	cluster-autoscaler
+•	cloud-controller-manager
+•	csi-azuredisk-controller
+•	csi-azurefile-controller
+•	csi-snapshot-controller
+
+Azure API Gateway
+•	ApiManagementGatewayLogs
+
+Azure Application Insights
+•	availabilityResults
+•	browserTimings
+•	customEvents
+•	customMetrics
+•	dependencies
+•	exceptions
+•	pageViews
+•	performanceCounters
+•	requests
+•	traces
+
+Azure App Service
+•	AppServiceAntivirusScanAuditLogs
+•	AppServiceConsoleLogs
+•	AppServiceAppLogs
+•	AppServiceFileAuditLogs
+•	AppServiceAuditLogs
+•	AppServiceIPSecAuditLogs
+•	AppServicePlatformLogs
+
+Azure Function
+•	FunctionAppLogs
+
+Azure CosmosDB
+•	DataPlaneRequests
+•	MongoRequests
+•	QueryRuntimeStatistics
+•	PartitionKeyStatistics
+•	PartitionKeyRUConsumption
+•	ControlPlaneRequests
+•	CassandraRequests
+•	GremlinRequests
+•	TableApiRequests
+
+Azure Logic App
+•	AzureDiagnostics-WorkflowRuntime
+
+Azure Public IP
+•	AzureDiagnostics-DDoSProtectionNotifications
+
+Azure SQL
+•	AzureDiagnostics-SQLSecurityAuditEvents, DevOpsOperationsAudit
+
+Azure SQL Managed Instance
+•	AzureDiagnostics-SQLSecurityAuditEvents, DevOpsOperationsAudit
+
+Azure Storage Account
+•	StorageTableLogs
+•	StorageQueueLogs
+•	StorageFileLogs
+•	StorageBlobLogs
 
 
